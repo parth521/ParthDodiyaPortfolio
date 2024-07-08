@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Portfolio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="#Parth Dodiya Portfolio">Parth Dodiya - Senior Game Developer Portfolio</a></li>
+        <li><a href="add_project.html">Add Project</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section id="work" class="centered-section">
+      <h1>My Work</h1>
+      <div id="projects-container" class="grid-container">
+        <!-- Dynamically loaded projects will appear here -->
+      </div>
+    </section>
+    <section id="about" class="centered-section">
+      <h1>About Me</h1>
+      <p>Hello, my name is Parth Dodiya, and I am a Senior Game Developer based in Gandhinagar, Gujarat. With over nine years of experience in the gaming industry, I have had the opportunity to work on a diverse range of projects, spanning 2D and 3D games, multiplayer experiences, as well as AR, VR, and MR applications.
+        My technical expertise lies in Unity, Cocos, and PixiJS, and I am proficient in programming languages such as C#, TypeScript, and C++. Throughout my career, I have successfully led and contributed to significant projects, including the JIO Tesseract Jio Glass Project and a Metaverse initiative for Ernst & Young and Telespin.
+        Currently, I am focused on developing a real-money multiplayer poker card game with tournament functionality. This project highlights my skills in both technical development and project management, showcasing my ability to deliver complex gaming experiences. My passion for innovation and commitment to excellence drives me to create engaging and immersive games that resonate with players.</p>
+    </section>
+    <section id="contact" class="centered-section">
+      <h1>Contact Me</h1>
+      <p>Mobile: +91-823-803-6405</p>
+      <p>Email: <a href="mailto:dodiya.parth20@gmail.com">dodiya.parth20@gmail.com</a></p>
+    </section>
+  </main>
+
+  <div id="projectModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <h2 id="modalProjectName"></h2>
+      <img id="modalProjectIcon" src="" alt="Project Icon">
+      <p id="modalProjectDescription"></p>
+      <p id="modalProjectToolsUsed"></p>
+      <p id="modalProjectSpecificModule"></p>
+      <p id="modalProjectTags"></p>
+      <div id="modalProjectLinks">
+        <!-- Links will be dynamically added here -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const projects = JSON.parse(localStorage.getItem('projects')) || [];
+    const projectContainer = document.getElementById('projects-container');
+
+    function createProjectTile(project) {
+      const projectTile = document.createElement('div');
+      projectTile.className = 'grid-item';
+      projectTile.style.backgroundImage = `url(${project.icon})`;
+      projectTile.innerHTML = `
+        <h3>${project.name}</h3>
+        <button class="edit-project">Edit</button>
+      `;
+
+      projectTile.addEventListener('click', function() {
+        document.getElementById('modalProjectName').textContent = project.name;
+        document.getElementById('modalProjectIcon').src = project.icon;
+        document.getElementById('modalProjectDescription').textContent = project.description;
+        document.getElementById('modalProjectToolsUsed').textContent = `Tools Used: ${project.toolsUsed}`;
+        document.getElementById('modalProjectSpecificModule').textContent = `My Work (Specific Module): ${project.specificModule}`;
+        document.getElementById('modalProjectTags').textContent = `Tags: ${project.tags ? project.tags.join(', ') : ''}`;
+
+        const modalProjectLinks = document.getElementById('modalProjectLinks');
+        modalProjectLinks.innerHTML = '';
+
+        if (project.googlePlayLink) {
+          const googlePlayLinkElement = document.createElement('a');
+          googlePlayLinkElement.href = project.googlePlayLink;
+          googlePlayLinkElement.target = '_blank';
+          googlePlayLinkElement.innerHTML = `<img src="Commonimage/googleplay.png" class="clickable-image" alt="Google Play Store">`;
+          modalProjectLinks.appendChild(googlePlayLinkElement);
+        }
+
+        if (project.appleAppStoreLink) {
+          const appleAppStoreLinkElement = document.createElement('a');
+          appleAppStoreLinkElement.href = project.appleAppStoreLink;
+          appleAppStoreLinkElement.target = '_blank';
+          appleAppStoreLinkElement.innerHTML = `<img src="Commonimage/appstore.png" class="clickable-image" alt="Apple App Store">`;
+          modalProjectLinks.appendChild(appleAppStoreLinkElement);
+        }
+
+        if (project.videoLink) {
+          const videoLinkElement = document.createElement('a');
+          videoLinkElement.href = project.videoLink;
+          videoLinkElement.target = '_blank';
+          videoLinkElement.innerHTML = `<img src="Commonimage/video-icon.png" class="clickable-image" alt="Video Link">`;
+          modalProjectLinks.appendChild(videoLinkElement);
+        }
+
+        document.getElementById('projectModal').style.display = 'block';
+      });
+
+      projectTile.querySelector('.edit-project').addEventListener('click', function(event) {
+        event.stopPropagation();
+        localStorage.setItem('editProject', JSON.stringify(project));
+        window.location.href = 'add_project.html';
+      });
+
+      projectContainer.appendChild(projectTile);
+    }
+
+    projects.forEach(createProjectTile);
+
+    document.querySelector('.close').addEventListener('click', function() {
+      document.getElementById('projectModal').style.display = 'none';
+    });
+  });
+</script>
+
+  
+</body>
+</html>

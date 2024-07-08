@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Project</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .tag-popup {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 1px solid #ccc;
+      padding: 20px;
+      background-color: white;
+      z-index: 1000;
+    }
+    .tag-popup label, .tag-popup textarea, .tag-popup button {
+      display: block;
+      margin-bottom: 10px;
+    }
+    .tag-popup button {
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul>
+        <li><a href="index.html">Back to Portfolio</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="centered-section">
+      <h1>Add a New Project</h1>
+      <form id="projectForm">
+        <label for="projectName">Project Name:</label>
+        <input type="text" id="projectName" name="projectName" required><br><br>
+        
+        <label for="projectIcon">Project Icon:</label>
+        <input type="file" id="projectIcon" name="projectIcon" accept="image/*" required><br><br>
+        
+        <label for="projectDescription">Project Description:</label>
+        <textarea id="projectDescription" name="projectDescription" required></textarea><br><br>
+        
+        <label for="toolsUsed">Tools Used:</label>
+        <input type="text" id="toolsUsed" name="toolsUsed" required><br><br>
+
+        <label for="specificModule">My Work (Specific Module):</label>
+        <input type="text" id="specificModule" name="specificModule" required><br><br>
+        
+        <label for="googlePlayLink">Google Play Link:</label>
+        <input type="url" id="googlePlayLink" name="googlePlayLink"><br><br>
+        
+        <label for="appleAppStoreLink">Apple App Store Link:</label>
+        <input type="url" id="appleAppStoreLink" name="appleAppStoreLink"><br><br>
+        
+        <label for="videoLink">Video Link:</label>
+        <input type="url" id="videoLink" name="videoLink"><br><br>
+
+        <button type="button" onclick="openTagPopup()">Add Tags</button><br><br>
+        
+        <button type="submit">Add Project</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="tagPopup" class="tag-popup">
+    <h2>Add Tags</h2>
+    <label for="tagDescription">Description:</label>
+    <textarea id="tagDescription" name="tagDescription" required></textarea><br><br>
+    <button onclick="addTag()">Add Tag</button>
+    <button onclick="closeTagPopup()">Close</button>
+  </div>
+
+  <script>
+    let tags = [];
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      const editProject = JSON.parse(localStorage.getItem('editProject'));
+      if (editProject) {
+        document.getElementById('projectName').value = editProject.name;
+        document.getElementById('projectDescription').value = editProject.description;
+        document.getElementById('toolsUsed').value = editProject.toolsUsed;
+        document.getElementById('specificModule').value = editProject.specificModule;
+        document.getElementById('googlePlayLink').value = editProject.googlePlayLink || '';
+        document.getElementById('appleAppStoreLink').value = editProject.appleAppStoreLink || '';
+        document.getElementById('videoLink').value = editProject.videoLink || '';
+        tags = editProject.tags || [];
+      }
+  
+      document.getElementById('projectForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+  
+        const name = document.getElementById('projectName').value;
+        const iconFile = document.getElementById('projectIcon').files[0];
+        const description = document.getElementById('projectDescription').value;
+        const toolsUsed = document.getElementById('toolsUsed').value;
+        const specificModule = document.getElementById('specificModule').value;
+        const googlePlayLink = document.getElementById('googlePlayLink').value;
+        const appleAppStoreLink = document.getElementById('appleAppStoreLink').value;
+        const videoLink = document.getElementById('videoLink').value;
+  
+        const reader = new FileReader();
+        reader.onloadend = function() {
+          const icon = reader.result;
+  
+          const project = {
+            name: name,
+            icon: icon,
+            description: description,
+            toolsUsed: toolsUsed,
+            specificModule: specificModule,
+            googlePlayLink: googlePlayLink,
+            appleAppStoreLink: appleAppStoreLink,
+            videoLink: videoLink,
+            tags: tags
+          };
+  
+          let projects = JSON.parse(localStorage.getItem('projects')) || [];
+          if (editProject) {
+            const index = projects.findIndex(p => p.name === editProject.name);
+            projects[index] = project;
+          } else {
+            projects.push(project);
+          }
+  
+          localStorage.setItem('projects', JSON.stringify(projects));
+          localStorage.removeItem('editProject');
+          alert('Project added! Go back to the portfolio to see it.');
+        };
+        reader.readAsDataURL(iconFile);
+      });
+    });
+    
+    function openTagPopup() {
+      document.getElementById('tagPopup').style.display = 'block';
+    }
+
+    function closeTagPopup() {
+      document.getElementById('tagPopup').style.display = 'none';
+    }
+
+    function addTag() {
+      const description = document.getElementById('tagDescription').value;
+      tags.push(description);
+      document.getElementById('tagDescription').value = '';
+      alert('Tag added!');
+    }
+  </script>
+  
+</body>
+</html>
